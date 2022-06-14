@@ -1,0 +1,54 @@
+syntax = "proto3";
+option go_package = "pkg/grpc";
+
+message Pair {
+  string key = 1;
+  string value = 2;
+}
+
+message KeyRequest {
+  string key = 1;
+}
+
+message ErrorResponse {
+  string key = 1;
+}
+
+message InstanceKeyBroadcast {
+  string key = 1;
+  string value = 2;
+  string instance = 3;
+
+  enum Operation {
+    WRITE = 0;
+    DELETE = 1;
+  }
+
+  Operation operation = 4;
+}
+message InstanceKeyBroadCastReply {
+  string instance = 1;
+}
+
+message HeartbeatResponse {
+  repeated InstanceKeyBroadCastReply instances = 1;
+}
+
+message DatabaseDump {
+  repeated Pair pairs = 1;
+}
+
+// Empty can be extended in the future
+message Empty {
+
+}
+
+service Gedis {
+  rpc GetValue(KeyRequest) returns (Pair);
+  rpc PutPair(Pair) returns (Empty);
+  rpc DeleteValue(KeyRequest) returns (Empty);
+  rpc Dump(Empty) returns (DatabaseDump);
+  rpc Heartbeat(InstanceKeyBroadCastReply) returns (HeartbeatResponse);
+
+  rpc Broadcast(InstanceKeyBroadcast) returns (InstanceKeyBroadCastReply);
+}

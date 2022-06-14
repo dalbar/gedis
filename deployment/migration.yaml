@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-gedis
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: ko://github.com/dalbar/gedis/cmd/migrate
+      restartPolicy: Never
+  backoffLimit: 4
